@@ -40,7 +40,7 @@ final class SessionViewModel {
     private let config: SayAgainConfiguration
     private let catalog: any LanguageCatalog
     private let translator: any Translating
-    private let makeTranscriber: @Sendable () -> AppleSpeechTranscriber
+    private let makeTranscriber: @Sendable () -> any StreamingTranscriber
 
     // Per-session state.
     private var transcriptionCoordinator: TranscriptionCoordinator?
@@ -54,7 +54,7 @@ final class SessionViewModel {
         translationBridge: TranslationBridge,
         preferences: LanguagePreferences,
         translator: any Translating,
-        makeTranscriber: @Sendable @escaping () -> AppleSpeechTranscriber
+        makeTranscriber: @Sendable @escaping () -> any StreamingTranscriber
     ) {
         self.config = config
         self.catalog = catalog

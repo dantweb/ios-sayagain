@@ -33,5 +33,15 @@
     "mainFilename": "transcript.txt",
     "timestampFormat": "HH:mm:ss",
     "truncateOnSessionStart": true
+  },
+  "engines": {
+    "recognition": {
+      "native":  ["en","es","fr","de","it","pt","zh","ja","ko","ar"],
+      "whisper": ["ru","pl","ro","hu","th"]
+    },
+    "translation": {
+      "native": ["en","es","fr","de","it","pt","zh","ja","ko","ar","ru","pl"],
+      "nllb":   ["ro","hu","th"]
+    }
   }
 }

@@ -6,6 +6,9 @@ nonisolated struct SayAgainConfiguration: Sendable, Codable, Equatable {
     let translation: TranslationConfig
     let audio: AudioConfig
     let transcript: TranscriptConfig
+    /// Per-language engine routing (Whisper for STT, NLLB for MT). Optional so existing
+    /// configs load without the block; defaults keep everything on the native path.
+    let engines: EnginesConfig?
 
     static func loadFromBundle(name: String = "config", bundle: Bundle = .main) throws -> Self {
         guard let url = bundle.url(forResource: name, withExtension: "json") else {
@@ -52,4 +55,25 @@ nonisolated struct TranscriptConfig: Sendable, Codable, Equatable {
     let mainFilename: String
     let timestampFormat: String
     let truncateOnSessionStart: Bool
+}
+
+/// Which engine handles which language.
+///
+/// - `recognition.native` — locales handled by Apple's `SpeechTranscriber`
+/// - `recognition.whisper` — locales handled by the WhisperKit-based batch engine
+/// - `translation.native` — pairs handled by Apple's `Translation` framework (any-to-any)
+/// - `translation.nllb` — languages that force the pair through NLLB even if the other side is native
+nonisolated struct EnginesConfig: Sendable, Codable, Equatable {
+    let recognition: RecognitionRouting
+    let translation: TranslationRouting
+}
+
+nonisolated struct RecognitionRouting: Sendable, Codable, Equatable {
+    let native: [String]
+    let whisper: [String]
+}
+
+nonisolated struct TranslationRouting: Sendable, Codable, Equatable {
+    let native: [String]
+    let nllb: [String]
 }

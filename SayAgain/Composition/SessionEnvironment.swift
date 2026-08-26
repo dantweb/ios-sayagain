@@ -16,7 +16,17 @@ enum SessionEnvironment {
         )
 
         let bridge = TranslationBridge()
-        let translator = BridgeTranslator(bridge: bridge)
+        let bridgeTranslator = BridgeTranslator(bridge: bridge)
+        let nllb = NLLBTranslator()
+
+        // CompoundTranslator picks the right backend per pair, driven by config.
+        let nllbTargets: Set<String> = Set(config.engines?.translation.nllb ?? [])
+        let compound = CompoundTranslator(
+            native: bridgeTranslator,
+            nllb: nllb,
+            nllbTargets: nllbTargets
+        )
+
         let preferences = LanguagePreferences()
 
         return SessionViewModel(
@@ -24,8 +34,16 @@ enum SessionEnvironment {
             catalog: catalog,
             translationBridge: bridge,
             preferences: preferences,
-            translator: translator,
-            makeTranscriber: { AppleSpeechTranscriber(clock: SystemClock()) }
+            translator: compound,
+            makeTranscriber: { Self.makeStreamingTranscriber(config: config) }
         )
+    }
+
+    /// Constructs the streaming transcriber the session uses. For now this is always the
+    /// Apple native transcriber; slice 2 will introduce a composite that routes per-locale
+    /// (Apple for supported locales, `EndpointedTranscriber(engine: WhisperTranscriptionEngine())`
+    /// for the rest).
+    nonisolated static func makeStreamingTranscriber(config: SayAgainConfiguration) -> any StreamingTranscriber {
+        AppleSpeechTranscriber(clock: SystemClock())
     }
 }
