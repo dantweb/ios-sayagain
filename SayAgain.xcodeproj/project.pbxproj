@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		979FA090303F6EF400277894 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 979FA08F303F6EF400277894 /* WhisperKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		97BEAA6A303ED93700533F18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				979FA090303F6EF400277894 /* WhisperKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +77,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		979FA083303F6CD100277894 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		97BEAA51303ED93600533F18 = {
 			isa = PBXGroup;
 			children = (
 				97BEAA5C303ED93600533F18 /* SayAgain */,
 				97BEAA6C303ED93700533F18 /* SayAgainTests */,
 				97BEAA76303ED93700533F18 /* SayAgainUITests */,
+				979FA083303F6CD100277894 /* Frameworks */,
 				97BEAA5B303ED93600533F18 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +125,7 @@
 			);
 			name = SayAgain;
 			packageProductDependencies = (
+				979FA08F303F6EF400277894 /* WhisperKit */,
 			);
 			productName = SayAgain;
 			productReference = 97BEAA5A303ED93600533F18 /* SayAgain.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 97BEAA51303ED93600533F18;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				979FA086303F6EF400277894 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 97BEAA5B303ED93600533F18 /* Products */;
 			projectDirPath = "";
@@ -584,6 +601,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		979FA086303F6EF400277894 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/argmax-oss-swift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		979FA08F303F6EF400277894 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 979FA086303F6EF400277894 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */;
+			productName = WhisperKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97BEAA52303ED93600533F18 /* Project object */;
 }

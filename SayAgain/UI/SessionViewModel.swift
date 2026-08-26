@@ -40,7 +40,7 @@ final class SessionViewModel {
     private let config: SayAgainConfiguration
     private let catalog: any LanguageCatalog
     private let translator: any Translating
-    private let makeTranscriber: @Sendable () -> any StreamingTranscriber
+    private let makeTranscriber: @Sendable ([String]) -> any StreamingTranscriber
 
     // Per-session state.
     private var transcriptionCoordinator: TranscriptionCoordinator?
@@ -54,7 +54,7 @@ final class SessionViewModel {
         translationBridge: TranslationBridge,
         preferences: LanguagePreferences,
         translator: any Translating,
-        makeTranscriber: @Sendable @escaping () -> any StreamingTranscriber
+        makeTranscriber: @Sendable @escaping ([String]) -> any StreamingTranscriber
     ) {
         self.config = config
         self.catalog = catalog
@@ -97,7 +97,8 @@ final class SessionViewModel {
                 )
             )
 
-            let transcriber = makeTranscriber()
+            let candidates = Array(preferences.recognitionLanguages).sorted()
+            let transcriber = makeTranscriber(candidates)
             let policy = TranscriptionPolicy(config: config.transcription)
             let transcription = TranscriptionCoordinator(
                 transcriber: transcriber,
@@ -144,9 +145,8 @@ final class SessionViewModel {
                 }
             }
 
+            // The `candidates` list was already computed above (used to pick the engine).
             // Recognition candidates come from the user's Default-language selection in Settings.
-            // One language = fast + accurate. Multiple = multi-language guessing at higher cost.
-            let candidates = Array(preferences.recognitionLanguages).sorted()
             try await transcription.start(spokenLanguages: candidates)
             isRunning = true
             // Keep the phone awake while a session runs. Screen may still dim/lock, but

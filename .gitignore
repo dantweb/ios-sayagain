@@ -1,0 +1,12 @@
+# Xcode user-specific state
+xcuserdata/
+*.xcuserstate
+
+# JetBrains IDE
+.idea/
+
+# Local Swift package clones (WhisperKit is referenced via remote SPM instead)
+dep_src/
+
+# macOS
+.DS_Store
