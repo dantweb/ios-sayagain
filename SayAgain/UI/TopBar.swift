@@ -67,7 +67,7 @@ struct TopBar: View {
     private func export(format: ExportFormat) {
         guard let exporter = ExporterRegistry.default.exporter(for: format) else { return }
         do {
-            let file = try exporter.export(vm.currentSnapshot)
+            let file = try exporter.export(vm.currentSnapshot, shape: currentShape)
             pendingFiles = [file]
             showingShareSheet = true
         } catch {
@@ -77,8 +77,16 @@ struct TopBar: View {
 
     private func copyFullText() {
         guard let exporter = ExporterRegistry.default.exporter(for: .txt),
-              let file = try? exporter.export(vm.currentSnapshot),
+              let file = try? exporter.export(vm.currentSnapshot, shape: currentShape),
               let text = String(data: file.data, encoding: .utf8) else { return }
         UIPasteboard.general.string = text
+    }
+
+    private var currentShape: ExportShape {
+        switch vm.preferences.displayMode {
+        case .paragraphs:      return .paragraphs
+        case .stream:          return .stream
+        case .translationOnly: return .translationOnly
+        }
     }
 }

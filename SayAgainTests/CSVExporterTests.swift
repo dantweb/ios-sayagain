@@ -100,7 +100,7 @@ struct CSVExporterTests {
 
         struct FakeExporter: TranscriptExporter {
             let format: ExportFormat = .csv       // reuses the csv slot for the test
-            func export(_ session: SessionSnapshot) throws -> ExportedFile {
+            func export(_ session: SessionSnapshot, shape: ExportShape) throws -> ExportedFile {
                 ExportedFile(filename: "fake.csv", data: Data("x".utf8), uti: "public.text")
             }
         }
