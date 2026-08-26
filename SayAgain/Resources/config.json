@@ -1,8 +1,8 @@
 {
   "endpointer": {
     "minSpeechSeconds": 0.4,
-    "maxSpeechSeconds": 12.0,
-    "silenceHangoverSeconds": 0.6,
+    "maxSpeechSeconds": 5.0,
+    "silenceHangoverSeconds": 0.3,
     "preRollSeconds": 0.25,
     "noiseFloorAlpha": 0.05,
     "speechThresholdFactor": 3.0

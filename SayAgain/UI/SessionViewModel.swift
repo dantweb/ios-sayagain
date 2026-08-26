@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UIKit
 
 struct DisplayedLine: Identifiable, Sendable, Hashable {
     let line: TranscriptLine
@@ -148,9 +149,13 @@ final class SessionViewModel {
             let candidates = Array(preferences.recognitionLanguages).sorted()
             try await transcription.start(spokenLanguages: candidates)
             isRunning = true
+            // Keep the phone awake while a session runs. Screen may still dim/lock, but
+            // background transcription continues.
+            UIApplication.shared.isIdleTimerDisabled = true
         } catch {
             errorMessage = "Failed to start: \(error.localizedDescription)"
             await tearDown()
+            UIApplication.shared.isIdleTimerDisabled = false
         }
     }
 
@@ -160,6 +165,7 @@ final class SessionViewModel {
         await tearDown()
         volatileText = ""
         isRunning = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func cancel() async {
@@ -170,6 +176,7 @@ final class SessionViewModel {
         volatileText = ""
         isRunning = false
         sweepSessionFiles()
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func clean() async {

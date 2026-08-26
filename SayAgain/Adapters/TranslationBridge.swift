@@ -34,13 +34,16 @@ final class TranslationBridge {
             pending.append(Pending(text: text, from: source, to: target, continuation: continuation))
             let newPair = PairKey(from: source, to: target)
             if lastPair != newPair {
+                // `.highFidelity` routes through Apple Intelligence when available (iOS 26+ on
+                // supported devices) — noticeably better on hard pairs like es↔ru and de↔en.
+                // Falls back to `.lowLatency` automatically when Apple Intelligence isn't there.
                 currentConfig = TranslationSession.Configuration(
                     source: Locale.Language(identifier: source),
-                    target: Locale.Language(identifier: target)
+                    target: Locale.Language(identifier: target),
+                    preferredStrategy: .highFidelity
                 )
                 lastPair = newPair
             } else if var config = currentConfig {
-                // Same pair — re-fire the task by invalidating & reassigning.
                 config.invalidate()
                 currentConfig = config
             }
