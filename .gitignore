@@ -8,5 +8,11 @@ xcuserdata/
 # Local Swift package clones (WhisperKit is referenced via remote SPM instead)
 dep_src/
 
+# Python venv for one-time OPUS-MT conversion (keep at repo root, outside app target)
+.venv-opus/
+
+# Converted OPUS-MT models — user drags into Xcode as folder references
+SayAgain/tools/models/
+
 # macOS
 .DS_Store

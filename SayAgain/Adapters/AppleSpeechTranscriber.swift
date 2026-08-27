@@ -48,34 +48,35 @@ actor AppleSpeechTranscriber: StreamingTranscriber {
         //    (particularly on Simulator). We don't reject on install failure here — we let
         //    SpeechAnalyzer.start be the source of truth for whether the locale is actually
         //    functional (step 4).
+        //
+        //    `supportedLocale(equivalentTo:)` sometimes resolves a bare language ("es") to a
+        //    region variant ("es_MX") whose assets aren't downloadable in the current runtime
+        //    (notably Simulator). If the resolved locale reports `.unsupported`, we scan
+        //    `supportedLocales` for another region of the same language whose assets are
+        //    actually offered.
+        let allSupported = await SpeechTranscriber.supportedLocales
         var candidatePairs: [(locale: Locale, module: SpeechTranscriber)] = []
         for locale in resolvedLocales {
-            // Enable transcriptionConfidence so we can filter out phonetic-garbage results
-            // emitted by wrong-locale analyzers in a multi-language session.
-            let preset = SpeechTranscriber.Preset.progressiveTranscription
-            let module = SpeechTranscriber(
-                locale: locale,
-                transcriptionOptions: preset.transcriptionOptions,
-                reportingOptions: preset.reportingOptions,
-                attributeOptions: preset.attributeOptions.union([.transcriptionConfidence])
+            let (chosenLocale, chosenModule, chosenStatus) = await Self.pickUsableLocale(
+                startingFrom: locale,
+                supportedLocales: allSupported
             )
-            let status = await AssetInventory.status(forModules: [module])
-            switch status {
+            switch chosenStatus {
             case .installed:
-                candidatePairs.append((locale, module))
+                candidatePairs.append((chosenLocale, chosenModule))
             case .supported, .downloading:
                 do {
-                    if let request = try await AssetInventory.assetInstallationRequest(supporting: [module]) {
+                    if let request = try await AssetInventory.assetInstallationRequest(supporting: [chosenModule]) {
                         try await request.downloadAndInstall()
                     }
                 } catch {
-                    print("AppleSpeechTranscriber: install for \(locale.identifier) reported \(error) — trying analyzer anyway")
+                    print("AppleSpeechTranscriber: install for \(chosenLocale.identifier) reported \(error) — trying analyzer anyway")
                 }
-                candidatePairs.append((locale, module))
+                candidatePairs.append((chosenLocale, chosenModule))
             case .unsupported:
-                print("AppleSpeechTranscriber: \(locale.identifier) unsupported (assets not offered)")
+                print("AppleSpeechTranscriber: no usable region for '\(locale.identifier)' (assets not offered in this runtime)")
             @unknown default:
-                print("AppleSpeechTranscriber: \(locale.identifier) unknown status — skipping")
+                print("AppleSpeechTranscriber: \(chosenLocale.identifier) unknown status — skipping")
             }
         }
         guard !candidatePairs.isEmpty else {
@@ -205,6 +206,54 @@ actor AppleSpeechTranscriber: StreamingTranscriber {
         resultsTasks.removeAll()
 
         try? deactivateAudioSession()
+    }
+
+    // MARK: - Locale fallback
+
+    /// Builds a `SpeechTranscriber` module for `locale`. If assets for that exact locale
+    /// aren't offered here, scans `supportedLocales` for another region of the same
+    /// language whose assets can be installed or are already installed.
+    ///
+    /// Returns the chosen locale, its module, and the final AssetInventory status of that
+    /// module (`.installed`, `.supported`, `.downloading`, or `.unsupported` if nothing
+    /// panned out).
+    private static func pickUsableLocale(
+        startingFrom locale: Locale,
+        supportedLocales: [Locale]
+    ) async -> (Locale, SpeechTranscriber, AssetInventory.Status) {
+        let module = makeModule(for: locale)
+        let status = await AssetInventory.status(forModules: [module])
+        if status != .unsupported {
+            return (locale, module, status)
+        }
+
+        // Fall back to any other same-language region whose assets are actually offered.
+        let langCode = locale.language.languageCode?.identifier
+        let fallbacks = supportedLocales.filter { candidate in
+            guard candidate.identifier != locale.identifier else { return false }
+            return candidate.language.languageCode?.identifier == langCode
+        }
+        for candidate in fallbacks {
+            let candidateModule = makeModule(for: candidate)
+            let candidateStatus = await AssetInventory.status(forModules: [candidateModule])
+            if candidateStatus != .unsupported {
+                print("AppleSpeechTranscriber: '\(locale.identifier)' unsupported → falling back to '\(candidate.identifier)'")
+                return (candidate, candidateModule, candidateStatus)
+            }
+        }
+        return (locale, module, .unsupported)
+    }
+
+    private static func makeModule(for locale: Locale) -> SpeechTranscriber {
+        // Enable transcriptionConfidence so we can filter out phonetic-garbage results
+        // emitted by wrong-locale analyzers in a multi-language session.
+        let preset = SpeechTranscriber.Preset.progressiveTranscription
+        return SpeechTranscriber(
+            locale: locale,
+            transcriptionOptions: preset.transcriptionOptions,
+            reportingOptions: preset.reportingOptions,
+            attributeOptions: preset.attributeOptions.union([.transcriptionConfidence])
+        )
     }
 
     // MARK: - Filtering & sentence splitting

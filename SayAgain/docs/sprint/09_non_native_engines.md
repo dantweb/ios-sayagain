@@ -1,6 +1,6 @@
 # Sprint 09 — Non-native STT and translation engines
 
-**Status:** 🟡 IN PROGRESS (2026-08-26). Slice 1 (this doc + `EndpointedTranscriber` + stubs + routing) lands with this sprint; slice 2 (WhisperKit wiring) after user adds SPM; slice 3 (NLLB translation) later.
+**Status:** 🟡 Slices 1 and 2 shipped (2026-08-26). Slice 3 (offline translation for ro/hu/th) **DEFERRED** — the HuggingFace Optimum CoreML exporter is broken in the current PyPI ecosystem (Optimum v2 dropped it; v1 needs an older `transformers` that has been API-removed). Users on Simulator or these locales see the "translation model not available" stub. See `tools/TOOLS.md` for the scaffolding kept for a future revisit.
 
 **Motivation.** Apple's `SpeechTranscriber` and `Translation` framework don't cover Romanian, Hungarian, Thai, and (for translation) many pairs. To honour the sprint's principle "the app promises only what the device can do" while covering these languages, we add non-native engines behind the *existing* ports.
 
@@ -94,16 +94,50 @@ At this slice's end, the app still runs identically for Apple-supported language
 
 **Latency:** batch-per-utterance. `EndpointedTranscriber` cuts on silence (≥ `silenceHangoverSeconds` = 0.3 s configured), then whisper `base` transcribes an utterance in ~200-800 ms on iPhone 14. Users see `.final` events per utterance; no volatile.
 
-### Slice 3 — NLLB translation for RO/HU/TH pairs
+### Slice 3 — Offline translation for RO / HU / TH pairs (OPUS-MT + CoreML)
 
-1. Off-device (Python): convert `facebook/nllb-200-distilled-600M` to CoreML via `coremltools`. Weight quantization to int8 → ~300 MB `.mlpackage`.
-2. Bundle `.mlpackage` in `SayAgain/Resources/` (or lazy-download on first non-native pair to spare the app-store binary size).
-3. `NLLBTranslator` uses `MLModel` + a tokenizer (SentencePiece via `SwiftSentencePiece` or bundled BPE tables).
-4. Register with `CompoundTranslator`; `TranslationCoordinator` calls it transparently for non-Apple pairs.
+**Revised approach (2026-08-26): abandon NLLB-200 (~600 MB per direction after quantization
+is still too large) in favour of Helsinki-NLP OPUS-MT pair-specific models. Each pair is
+~300 MB, we only bundle pairs the user actually needs, and non-English pairs (e.g. `ro↔hu`)
+chain through English at runtime.**
 
-**Alternative if NLLB proves impractical:** `TranslationSession(installedSource:target:)` pivot through English for pairs where Apple has both hops. Covers es↔pl (both via en). Doesn't help ro/hu/th.
+Coverage plan (each row is one `.mlpackage` pair):
 
-**Deferred until slice 3 lands:** the config's `translation.nllb` route falls back to a stub that reports "translation model not available", so users see clear feedback rather than a silent failure.
+| Pair | HuggingFace ID |
+|---|---|
+| en→ro | `Helsinki-NLP/opus-mt-en-ro` |
+| ro→en | `Helsinki-NLP/opus-mt-ro-en` |
+| en→hu | `Helsinki-NLP/opus-mt-en-hu` |
+| hu→en | `Helsinki-NLP/opus-mt-hu-en` |
+| en→th | `Helsinki-NLP/opus-mt-en-th` (if published; else fall back to `en-mul`) |
+| th→en | `Helsinki-NLP/opus-mt-th-en` (ditto) |
+
+For `ro↔hu`, `ro↔th`, `hu↔th`: chain via English (`ro→en→hu`, etc). Two model calls, slightly worse quality — acceptable for the long tail.
+
+**Off-device (Python), one-time per pair:**
+
+1. `tools/convert_opus_to_coreml.py --pair en-ro` uses HuggingFace `optimum-cli export coreml` to produce:
+   - `encoder.mlpackage` — encodes source tokens
+   - `decoder.mlpackage` — decodes one target token at a time (with-past variant)
+   - `tokenizer/` — SentencePiece model + vocab files
+2. Copy `models/opus-en-ro/` into `SayAgain/Resources/Models/opus-en-ro/` and add-folder-reference in Xcode.
+
+**On-device (Swift):**
+
+1. Add `github.com/huggingface/swift-transformers` as SPM dep (provides `Tokenizers` + `Hub` for BPE / SentencePiece).
+2. New `Adapters/OpusMTTranslator.swift` implementing `Translating`:
+   - Loads bundled encoder + decoder `.mlpackage`s via `MLModel(contentsOf:)`
+   - Tokenizes source with `swift-transformers`
+   - Greedy decode loop capped at 128 tokens, break on EOS
+   - Detokenize → return
+3. `CompoundTranslator` routes: if source or target ∈ {ro, hu, th}, use `OpusMTTranslator`.
+4. `Adapters/NLLBTranslator.swift` deleted; `config.json` renames `translation.nllb` → `translation.opus`.
+
+**Storage:** each pair ~300 MB. For all 6 direct pairs (excluding chained): ~1.8 GB.
+Recommend shipping a smaller subset in the base app and offering the rest as a
+download-on-demand asset pack (future work — not this slice).
+
+**Deferred until this slice lands:** the config's `translation.opus` route currently falls back to a stub that reports "translation model not available".
 
 ## Ports — no changes
 
