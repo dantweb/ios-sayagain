@@ -8,7 +8,7 @@
     "speechThresholdFactor": 3.0
   },
   "transcription": {
-    "spokenLanguages": ["ar","de","en","es","fr","hu","it","ja","ko","pl","pt","ro","ru","th","zh"],
+    "spokenLanguages": ["ar","de","en","es","fr","it","ja","ko","pt","zh"],
     "hallucinationBlocklist": [
       "thank you.",
       "thanks for watching.",
@@ -23,7 +23,7 @@
     "cacheLimit": 512,
     "outputFilePrefix": "translate",
     "outputFileExtension": "txt",
-    "availableTargets": ["ar","de","en","es","fr","hu","it","ja","ko","pl","pt","ro","ru","th","zh"]
+    "availableTargets": ["ar","de","en","es","fr","it","ja","ko","pl","pt","ru","zh"]
   },
   "audio": {
     "targetSampleRate": 16000,
@@ -34,14 +34,8 @@
     "timestampFormat": "HH:mm:ss",
     "truncateOnSessionStart": true
   },
-  "engines": {
-    "recognition": {
-      "native":  ["en","es","fr","de","it","pt","zh","ja","ko","ar"],
-      "whisper": ["ru","pl","ro","hu","th"]
-    },
-    "translation": {
-      "native": ["en","es","fr","de","it","pt","zh","ja","ko","ar","ru","pl"],
-      "nllb":   ["ro","hu","th"]
-    }
+  "planned": {
+    "recognition": ["ru","pl","ro","hu","th"],
+    "translation": ["ro","hu","th"]
   }
 }

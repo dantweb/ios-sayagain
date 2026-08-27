@@ -15,6 +15,16 @@ Layered split of the S149 sprint spec, adapted for this project (`SayAgain` + `S
 9. [`08_config_and_guards.md`](08_config_and_guards.md) — `config.json`, `SayAgainConfiguration`, deferred lints inventory
 10. [`phase0_probe.md`](phase0_probe.md) — DEFERRED: language-support measurement + committed fixture
 
+## SKU split (post-slice 2)
+
+**SayAgain** (this branch): Apple-native only. STT via `SpeechTranscriber`, MT via
+`Translation` framework. Locales Apple doesn't cover are surfaced in Settings as
+"coming in the next version" but not selectable.
+
+**SayAgainPlus** (branch `sayagainplus`, future separate target/repo): adds
+WhisperKit STT for `ru/pl/ro/hu/th` and offline OPUS-MT translation for `ro/hu/th`.
+Everything previously under sprint slice 09 lives there.
+
 ## Dependency map (top of file depends on bottom)
 
 ```

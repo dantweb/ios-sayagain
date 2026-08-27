@@ -3,6 +3,8 @@ import SwiftUI
 struct SettingsView: View {
     let allLanguages: [TranslationLanguage]
     let recognitionLanguages: [String]
+    let plannedRecognition: [String]
+    let plannedTranslation: [String]
     let preferences: LanguagePreferences
     var vm: SessionViewModel
     @Environment(\.dismiss) private var dismiss
@@ -14,11 +16,15 @@ struct SettingsView: View {
     init(
         allLanguages: [TranslationLanguage],
         recognitionLanguages: [String],
+        plannedRecognition: [String],
+        plannedTranslation: [String],
         preferences: LanguagePreferences,
         vm: SessionViewModel
     ) {
         self.allLanguages = allLanguages
         self.recognitionLanguages = recognitionLanguages
+        self.plannedRecognition = plannedRecognition
+        self.plannedTranslation = plannedTranslation
         self.preferences = preferences
         self.vm = vm
         _recognitionSelection = State(initialValue: preferences.recognitionLanguages)
@@ -61,6 +67,23 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                if !plannedRecognition.isEmpty {
+                    Section {
+                        ForEach(plannedRecognition, id: \.self) { code in
+                            HStack {
+                                Text(Locale.current.localizedString(forLanguageCode: code) ?? code)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text("coming in the next version")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    } header: {
+                        Text("Planned recognition languages")
+                    }
+                }
+
                 // MARK: Translate to
                 Section {
                     Button {
@@ -99,6 +122,23 @@ struct SettingsView: View {
                     Text("Green = ready. Yellow = downloads on first use. Red = not offered by Apple's Translation on this device.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                }
+
+                if !plannedTranslation.isEmpty {
+                    Section {
+                        ForEach(plannedTranslation, id: \.self) { code in
+                            HStack {
+                                Text(Locale.current.localizedString(forLanguageCode: code) ?? code)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text("coming in the next version")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    } header: {
+                        Text("Planned translation languages")
+                    }
                 }
 
             }

@@ -58,6 +58,8 @@ struct TopBar: View {
             SettingsView(
                 allLanguages: vm.configuredLanguages,
                 recognitionLanguages: vm.recognitionLanguages,
+                plannedRecognition: vm.plannedRecognitionLanguages,
+                plannedTranslation: vm.plannedTranslationLanguages,
                 preferences: vm.preferences,
                 vm: vm
             )

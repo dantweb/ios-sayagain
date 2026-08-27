@@ -34,13 +34,23 @@ final class SessionViewModel {
         config.transcription.spokenLanguages
     }
 
+    /// Languages we plan to add in a future release — shown in Settings as disabled
+    /// with a "coming in the next version" note so users know the gap is intentional.
+    var plannedRecognitionLanguages: [String] {
+        config.planned?.recognition ?? []
+    }
+
+    var plannedTranslationLanguages: [String] {
+        config.planned?.translation ?? []
+    }
+
     // Injected dependencies.
     let translationBridge: TranslationBridge   // exposed so the view can attach .translationTask
     let preferences: LanguagePreferences       // exposed so views can bind to onboarding / settings
     private let config: SayAgainConfiguration
     private let catalog: any LanguageCatalog
     private let translator: any Translating
-    private let makeTranscriber: @Sendable ([String]) -> any StreamingTranscriber
+    private let makeTranscriber: @Sendable () -> any StreamingTranscriber
 
     // Per-session state.
     private var transcriptionCoordinator: TranscriptionCoordinator?
@@ -54,7 +64,7 @@ final class SessionViewModel {
         translationBridge: TranslationBridge,
         preferences: LanguagePreferences,
         translator: any Translating,
-        makeTranscriber: @Sendable @escaping ([String]) -> any StreamingTranscriber
+        makeTranscriber: @Sendable @escaping () -> any StreamingTranscriber
     ) {
         self.config = config
         self.catalog = catalog
@@ -98,7 +108,7 @@ final class SessionViewModel {
             )
 
             let candidates = Array(preferences.recognitionLanguages).sorted()
-            let transcriber = makeTranscriber(candidates)
+            let transcriber = makeTranscriber()
             let policy = TranscriptionPolicy(config: config.transcription)
             let transcription = TranscriptionCoordinator(
                 transcriber: transcriber,
@@ -145,7 +155,6 @@ final class SessionViewModel {
                 }
             }
 
-            // The `candidates` list was already computed above (used to pick the engine).
             // Recognition candidates come from the user's Default-language selection in Settings.
             try await transcription.start(spokenLanguages: candidates)
             isRunning = true
