@@ -50,7 +50,9 @@ final class SessionViewModel {
     private let config: SayAgainConfiguration
     private let catalog: any LanguageCatalog
     private let translator: any Translating
-    private let makeTranscriber: @Sendable () -> any StreamingTranscriber
+    /// Factory takes the sorted list of user-picked recognition candidates so the Plus
+    /// tier can route between Apple STT and Whisper. The base tier ignores the argument.
+    private let makeTranscriber: @Sendable ([String]) -> any StreamingTranscriber
 
     // Per-session state.
     private var transcriptionCoordinator: TranscriptionCoordinator?
@@ -64,7 +66,7 @@ final class SessionViewModel {
         translationBridge: TranslationBridge,
         preferences: LanguagePreferences,
         translator: any Translating,
-        makeTranscriber: @Sendable @escaping () -> any StreamingTranscriber
+        makeTranscriber: @Sendable @escaping ([String]) -> any StreamingTranscriber
     ) {
         self.config = config
         self.catalog = catalog
@@ -108,7 +110,7 @@ final class SessionViewModel {
             )
 
             let candidates = Array(preferences.recognitionLanguages).sorted()
-            let transcriber = makeTranscriber()
+            let transcriber = makeTranscriber(candidates)
             let policy = TranscriptionPolicy(config: config.transcription)
             let transcription = TranscriptionCoordinator(
                 transcriber: transcriber,

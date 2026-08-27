@@ -9,6 +9,10 @@ nonisolated struct SayAgainConfiguration: Sendable, Codable, Equatable {
     /// Languages the app knows about but doesn't yet support in this build (Apple STT/MT
     /// coverage gaps). Shown as "coming in the next version" in the UI.
     let planned: PlannedLanguages?
+    /// Per-language engine routing used by the SayAgainPlus tier only (Whisper for STT,
+    /// NLLB for MT). Present in the plus-tier `config.json`; absent in the base config
+    /// — the composition root treats both cases as native-only for the base build.
+    let engines: EnginesConfig?
 
     static func loadFromBundle(name: String = "config", bundle: Bundle = .main) throws -> Self {
         guard let url = bundle.url(forResource: name, withExtension: "json") else {
@@ -63,4 +67,25 @@ nonisolated struct TranscriptConfig: Sendable, Codable, Equatable {
 nonisolated struct PlannedLanguages: Sendable, Codable, Equatable {
     let recognition: [String]
     let translation: [String]
+}
+
+/// Which engine handles which language (SayAgainPlus tier).
+///
+/// - `recognition.native` — locales handled by Apple's `SpeechTranscriber`
+/// - `recognition.whisper` — locales handled by the WhisperKit-based batch engine
+/// - `translation.native` — pairs handled by Apple's `Translation` framework
+/// - `translation.nllb` — languages that force the pair through NLLB even if the other side is native
+nonisolated struct EnginesConfig: Sendable, Codable, Equatable {
+    let recognition: RecognitionRouting
+    let translation: TranslationRouting
+}
+
+nonisolated struct RecognitionRouting: Sendable, Codable, Equatable {
+    let native: [String]
+    let whisper: [String]
+}
+
+nonisolated struct TranslationRouting: Sendable, Codable, Equatable {
+    let native: [String]
+    let nllb: [String]
 }

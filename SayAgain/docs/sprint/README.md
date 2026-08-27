@@ -15,15 +15,23 @@ Layered split of the S149 sprint spec, adapted for this project (`SayAgain` + `S
 9. [`08_config_and_guards.md`](08_config_and_guards.md) — `config.json`, `SayAgainConfiguration`, deferred lints inventory
 10. [`phase0_probe.md`](phase0_probe.md) — DEFERRED: language-support measurement + committed fixture
 
-## SKU split (post-slice 2)
+## SKU split — two Xcode targets, one `main` branch
 
-**SayAgain** (this branch): Apple-native only. STT via `SpeechTranscriber`, MT via
-`Translation` framework. Locales Apple doesn't cover are surfaced in Settings as
+**SayAgain** — default target, Apple-native only. `SpeechTranscriber` +
+`Translation` framework. Apple-uncovered locales are surfaced in Settings as
 "coming in the next version" but not selectable.
 
-**SayAgainPlus** (branch `sayagainplus`, future separate target/repo): adds
-WhisperKit STT for `ru/pl/ro/hu/th` and offline OPUS-MT translation for `ro/hu/th`.
-Everything previously under sprint slice 09 lives there.
+**SayAgainPlus** — sibling target activated by adding `SAYAGAINPLUS_TIER` to
+its `SWIFT_ACTIVE_COMPILATION_CONDITIONS`. Adds WhisperKit STT for
+`ru/pl/ro/hu/th` and (once bundled) OPUS-MT translation for `ro/hu/th`.
+
+Files that compile only in the Plus tier are wrapped in
+`#if SAYAGAINPLUS_TIER … #endif` guards. See `09_non_native_engines.md` for
+the Xcode setup checklist and file list.
+
+The `sayagainplus` branch (pre-split) preserves the earlier snapshot with the
+Python conversion tooling for a future revisit — it is not the source of
+truth any more.
 
 ## Dependency map (top of file depends on bottom)
 
