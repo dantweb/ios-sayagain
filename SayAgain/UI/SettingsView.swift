@@ -31,9 +31,20 @@ struct SettingsView: View {
         _currentTargetCode = State(initialValue: vm.selectedTarget?.code)
     }
 
+    #if SAYAGAINPLUS_TIER
+    /// Injected via `TopBar` from `SessionViewModel`. Non-nil in Plus builds.
+    private var downloads: ModelDownloadManager? { vm.downloadManager }
+    #endif
+
     var body: some View {
         NavigationStack {
             Form {
+
+                #if SAYAGAINPLUS_TIER
+                if let downloads {
+                    LanguagePacksSection(manager: downloads)
+                }
+                #endif
 
                 // MARK: Default language (recognition candidates)
                 Section {
@@ -98,15 +109,22 @@ struct SettingsView: View {
                         }
                     }
                     ForEach(allLanguages) { lang in
-                        let status = availability.byCode[lang.code]
-                        let disabled = status?.translation == .unsupported
+                        let appleStatus = availability.byCode[lang.code]
+                        let coveredByLLM = isCoveredByInstalledLLM(lang.code)
+                        // LLM install trumps Apple's "unsupported" — those targets are our
+                        // whole reason for shipping the LLM pack.
+                        let disabled = (appleStatus?.translation == .unsupported) && !coveredByLLM
                         Button {
                             currentTargetCode = lang.code
                         } label: {
                             HStack {
                                 Text(lang.displayName).foregroundStyle(disabled ? .secondary : .primary)
-                                if let status {
-                                    TranslationBadge(state: status.translation)
+                                if coveredByLLM {
+                                    Image(systemName: "cpu.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(.green)
+                                } else if let appleStatus {
+                                    TranslationBadge(state: appleStatus.translation)
                                 }
                                 Spacer()
                                 if currentTargetCode == lang.code {
@@ -119,7 +137,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Translate to")
                 } footer: {
-                    Text("Green = ready. Yellow = downloads on first use. Red = not offered by Apple's Translation on this device.")
+                    Text("Green mic = ready via Apple. Yellow = downloads on first use. CPU icon = handled by the installed on-device LLM. Red = not offered by Apple's Translation on this device.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -161,6 +179,18 @@ struct SettingsView: View {
     }
 
     static let recognitionLimit = 3
+
+    /// True when the requested target language is covered by the installed LLM pack.
+    /// In base SayAgain (no `SAYAGAINPLUS_TIER`) this always returns false.
+    private func isCoveredByInstalledLLM(_ code: String) -> Bool {
+        #if SAYAGAINPLUS_TIER
+        guard let downloads else { return false }
+        guard case .installed = downloads.statuses[.llmMT] ?? .unknown else { return false }
+        return vm.llmTranslationLanguages.contains(code)
+        #else
+        return false
+        #endif
+    }
 
     private func toggleRecognition(_ code: String) {
         if recognitionSelection.contains(code) {
@@ -227,3 +257,115 @@ private struct TranslationBadge: View {
         }
     }
 }
+
+#if SAYAGAINPLUS_TIER
+
+/// Extra-tier download surface: two rows for the two engine packs (Whisper + LLM) with
+/// download / cancel / delete affordances and live progress.
+private struct LanguagePacksSection: View {
+    let manager: ModelDownloadManager
+
+    var body: some View {
+        Section {
+            ForEach(ModelPack.allCases) { pack in
+                LanguagePackRow(pack: pack, manager: manager)
+            }
+        } header: {
+            Text("Language Packs")
+        } footer: {
+            Text("Downloads run in the foreground and are cached on-device. Delete to reclaim space; you can re-download at any time.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .onAppear { manager.refreshAll() }
+    }
+}
+
+private struct LanguagePackRow: View {
+    let pack: ModelPack
+    let manager: ModelDownloadManager
+
+    var body: some View {
+        let status = manager.statuses[pack] ?? .unknown
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(pack.displayName).font(.body)
+                    Text(pack.subtitle)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text(pack.approxSizeLabel)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+            }
+            statusRow(status)
+        }
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private func statusRow(_ status: ModelDownloadManager.Status) -> some View {
+        switch status {
+        case .unknown, .notInstalled:
+            HStack {
+                Button {
+                    manager.download(pack)
+                } label: {
+                    Label("Download", systemImage: "arrow.down.circle")
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                Spacer()
+            }
+        case .downloading(let fraction):
+            HStack(spacing: 12) {
+                ProgressView(value: fraction)
+                    .progressViewStyle(.linear)
+                Text("\(Int(fraction * 100))%")
+                    .font(.caption)
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                Button(role: .cancel) {
+                    manager.cancel(pack)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        case .installed:
+            HStack {
+                Label("Installed", systemImage: "checkmark.circle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.green)
+                Spacer()
+                Button(role: .destructive) {
+                    manager.delete(pack)
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+        case .failed(let message):
+            VStack(alignment: .leading, spacing: 6) {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .lineLimit(3)
+                Button {
+                    manager.download(pack)
+                } label: {
+                    Label("Retry", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+        }
+    }
+}
+
+#endif

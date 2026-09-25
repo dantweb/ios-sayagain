@@ -2,7 +2,10 @@ import Foundation
 
 actor TranslationCoordinator {
     private let translator: any Translating
-    private let sinkFactory: @Sendable (String) -> any TranscriptSink
+    /// Optional-returning so filesystem-init failures during a mid-session target switch
+    /// don't kill the app. A nil result just means "this target's per-file sink couldn't
+    /// be opened"; translations continue to emit events, they just skip file persistence.
+    private let sinkFactory: @Sendable (String) -> (any TranscriptSink)?
     private let clock: any ClockProviding
 
     private var cache: TranslationCache
@@ -14,7 +17,7 @@ actor TranslationCoordinator {
 
     init(
         translator: any Translating,
-        sinkFactory: @Sendable @escaping (String) -> any TranscriptSink,
+        sinkFactory: @Sendable @escaping (String) -> (any TranscriptSink)?,
         cacheLimit: Int,
         clock: any ClockProviding
     ) {
@@ -34,14 +37,19 @@ actor TranslationCoordinator {
     /// from *now on* for targets that stay active; targets removed here stop receiving lines
     /// from the next handleFinal call. Backlog is never re-translated (docs §04, test 4.11).
     func setTargets(_ targets: [String]) async {
+        print("TranslationCoordinator: setTargets \(activeTargets) → \(targets)")
         // Close sinks whose targets were removed.
         for target in activeTargets where !targets.contains(target) {
             await sinks[target]?.close()
             sinks[target] = nil
         }
-        // Open new sinks (idempotent: existing stay).
+        // Open new sinks (idempotent: existing stay). Factory may return nil on filesystem
+        // errors; we simply skip the file-persistence side for that target — translations
+        // still stream over the event channel.
         for target in targets where sinks[target] == nil {
-            sinks[target] = sinkFactory(target)
+            if let sink = sinkFactory(target) {
+                sinks[target] = sink
+            }
         }
         activeTargets = targets
     }

@@ -228,11 +228,17 @@ actor AppleSpeechTranscriber: StreamingTranscriber {
         }
 
         // Fall back to any other same-language region whose assets are actually offered.
+        // Order candidates by a preferred-region table so, e.g., German prefers `de_DE`
+        // over `de_CH` — Apple's own list ordering is not stable across OS versions.
         let langCode = locale.language.languageCode?.identifier
-        let fallbacks = supportedLocales.filter { candidate in
-            guard candidate.identifier != locale.identifier else { return false }
-            return candidate.language.languageCode?.identifier == langCode
-        }
+        let fallbacks: [Locale] = supportedLocales
+            .filter { candidate in
+                guard candidate.identifier != locale.identifier else { return false }
+                return candidate.language.languageCode?.identifier == langCode
+            }
+            .sorted { a, b in
+                Self.regionPriority(a, langCode: langCode) < Self.regionPriority(b, langCode: langCode)
+            }
         for candidate in fallbacks {
             let candidateModule = makeModule(for: candidate)
             let candidateStatus = await AssetInventory.status(forModules: [candidateModule])
@@ -242,6 +248,26 @@ actor AppleSpeechTranscriber: StreamingTranscriber {
             }
         }
         return (locale, module, .unsupported)
+    }
+
+    /// Preferred region per language when we have to fall back to a variant. Lower number
+    /// = tried first. Anything not listed sorts last (arbitrary but stable).
+    private static let preferredRegions: [String: [String]] = [
+        "de": ["DE"],
+        "en": ["GB"],
+        "es": ["ES"],
+        "fr": ["FR"],
+        "it": ["IT"],
+        "pt": ["PT"],
+        "zh": ["CN"],
+        "ar": ["SA"],
+        "nl": ["NL"],
+    ]
+
+    private static func regionPriority(_ locale: Locale, langCode: String?) -> Int {
+        guard let langCode, let order = preferredRegions[langCode],
+              let region = locale.region?.identifier else { return .max }
+        return order.firstIndex(of: region) ?? .max
     }
 
     private static func makeModule(for locale: Locale) -> SpeechTranscriber {

@@ -1,0 +1,5 @@
+// Copy this file to Signing.xcconfig in the same folder and set your team ID.
+// Signing.xcconfig is gitignored so your team ID never lands in the public repo.
+//
+// Find your team ID at https://developer.apple.com/account → Membership.
+DEVELOPMENT_TEAM = YOUR_APPLE_TEAM_ID_HERE

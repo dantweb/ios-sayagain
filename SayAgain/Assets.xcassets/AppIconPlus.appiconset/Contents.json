@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "ask_again_logo1024.png",
+      "filename" : "sayagain_plus_1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "ask_again_logo1024 1.png",
+      "filename" : "sayagain_plus_1024 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "ask_again_logo1024 2.png",
+      "filename" : "sayagain_plus_1024 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

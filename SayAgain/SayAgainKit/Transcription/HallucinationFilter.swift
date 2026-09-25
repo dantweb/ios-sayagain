@@ -15,7 +15,26 @@ nonisolated struct HallucinationFilter: Sendable {
         for phrase in normalisedBlocklist {
             working = working.replacingOccurrences(of: phrase, with: " ")
         }
-        return Self.collapseWhitespace(working).trimmingCharacters(in: .whitespacesAndNewlines)
+        working = Self.collapseWhitespace(working).trimmingCharacters(in: .whitespacesAndNewlines)
+        // Additional structural hallucination guards (Whisper's "confused" outputs):
+        //   - text with no letters at all (e.g. "$$$$$$..." or ".....")
+        //   - Whisper's non-speech tags in brackets/parens: "[music]", "(applause)",
+        //     "(speaking in foreign language)", etc.
+        if !working.contains(where: { $0.isLetter }) { return "" }
+        if Self.looksLikeNonSpeechTag(working) { return "" }
+        return working
+    }
+
+    /// True for strings that are just a bracketed/parenthesised non-speech marker like
+    /// `[music]`, `(applause)`, `[speaking in foreign language]`.
+    private static func looksLikeNonSpeechTag(_ s: String) -> Bool {
+        guard let first = s.first, let last = s.last else { return false }
+        let opens: Set<Character> = ["[", "(", "{"]
+        let closes: Set<Character> = ["]", ")", "}"]
+        guard opens.contains(first), closes.contains(last) else { return false }
+        // Between brackets, only whitespace or a short lowercased phrase.
+        let inner = s.dropFirst().dropLast().trimmingCharacters(in: .whitespaces)
+        return inner.count < 60
     }
 
     static func normalise(_ s: String) -> String {

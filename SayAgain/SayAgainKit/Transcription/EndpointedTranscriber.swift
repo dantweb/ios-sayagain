@@ -75,9 +75,21 @@ actor EndpointedTranscriber: StreamingTranscriber {
 
     /// Feed one raw PCM buffer. The endpointer emits zero or more `Utterance`s, each of which
     /// we transcribe on a detached task so the audio thread doesn't stall.
+    private var feedCount = 0
+    private var utteranceCount = 0
     func feed(_ buffer: AudioBuffer) {
         guard isRunning else { return }
+        feedCount += 1
+        if feedCount % 25 == 1 {
+            // Log every ~25th buffer to confirm audio flow without spamming.
+            let energy = buffer.samples.map { $0 * $0 }.reduce(0, +) / Float(max(buffer.samples.count, 1))
+            print("EndpointedTranscriber: feed #\(feedCount) samples=\(buffer.samples.count) rms²=\(String(format: "%.6f", energy))")
+        }
         let utterances = endpointer.feed(buffer)
+        if !utterances.isEmpty {
+            utteranceCount += utterances.count
+            print("EndpointedTranscriber: endpointer emitted \(utterances.count) utterance(s), total=\(utteranceCount)")
+        }
         for u in utterances { pendingUtterances.append(u) }
         scheduleDrain()
     }

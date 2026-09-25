@@ -74,7 +74,8 @@ nonisolated struct PlannedLanguages: Sendable, Codable, Equatable {
 /// - `recognition.native` — locales handled by Apple's `SpeechTranscriber`
 /// - `recognition.whisper` — locales handled by the WhisperKit-based batch engine
 /// - `translation.native` — pairs handled by Apple's `Translation` framework
-/// - `translation.nllb` — languages that force the pair through NLLB even if the other side is native
+/// - `translation.llm` — languages that force the pair through the on-device LLM
+///   translator (MLX) even if the other side is native
 nonisolated struct EnginesConfig: Sendable, Codable, Equatable {
     let recognition: RecognitionRouting
     let translation: TranslationRouting
@@ -87,5 +88,5 @@ nonisolated struct RecognitionRouting: Sendable, Codable, Equatable {
 
 nonisolated struct TranslationRouting: Sendable, Codable, Equatable {
     let native: [String]
-    let nllb: [String]
+    let llm: [String]
 }

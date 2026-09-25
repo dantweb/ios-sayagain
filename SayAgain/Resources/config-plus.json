@@ -1,0 +1,50 @@
+{
+  "endpointer": {
+    "minSpeechSeconds": 0.5,
+    "maxSpeechSeconds": 4.0,
+    "silenceHangoverSeconds": 0.25,
+    "preRollSeconds": 0.25,
+    "noiseFloorAlpha": 0.05,
+    "speechThresholdFactor": 2.0
+  },
+  "transcription": {
+    "spokenLanguages": ["ar","de","en","es","fr","hu","it","ja","ko","pl","pt","ro","ru","th","zh"],
+    "hallucinationBlocklist": [
+      "thank you.",
+      "thanks for watching.",
+      "please subscribe",
+      "субтитры сделал",
+      "다음 시간에",
+      "speaking in foreign language",
+      "music playing",
+      "applause"
+    ],
+    "minConfidence": 0.3,
+    "maxNoSpeechProbability": 0.7
+  },
+  "translation": {
+    "cacheLimit": 512,
+    "outputFilePrefix": "translate",
+    "outputFileExtension": "txt",
+    "availableTargets": ["ar","de","en","es","fr","hu","it","ja","ko","pl","pt","ro","ru","th","zh"]
+  },
+  "audio": {
+    "targetSampleRate": 16000,
+    "channelCount": 1
+  },
+  "transcript": {
+    "mainFilename": "transcript.txt",
+    "timestampFormat": "HH:mm:ss",
+    "truncateOnSessionStart": true
+  },
+  "engines": {
+    "recognition": {
+      "native":  ["en","es","fr","de","it","pt","zh","ja","ko","ar"],
+      "whisper": ["ru","pl","ro","hu","th"]
+    },
+    "translation": {
+      "native": ["en","es","fr","de","it","pt","zh","ja","ko","ar","ru","pl"],
+      "llm":    ["ro","hu","th"]
+    }
+  }
+}

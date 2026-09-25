@@ -44,6 +44,10 @@ private struct MainScreen: View {
             if vm.preferences.displayMode == .translationOnly {
                 ReadAloudBar(vm: vm, reader: reader, topVisibleID: topVisibleID)
             }
+            if vm.isWarmingUp {
+                WarmingUpBanner()
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
             Divider()
             TranscriptListView(
                 vm: vm,
@@ -53,12 +57,31 @@ private struct MainScreen: View {
             Divider()
             BottomBar(vm: vm)
         }
+        .animation(.easeInOut(duration: 0.2), value: vm.isWarmingUp)
         .onChange(of: vm.preferences.displayMode) { _, newValue in
             if newValue != .translationOnly {
                 reader.stop()
             }
         }
         .modifier(TranslationBridgeModifier(bridge: vm.translationBridge))
+    }
+}
+
+/// Shown while models are cold-loading at session start. Explains the silence between
+/// hitting Record and the first line appearing (~15-60s for the Plus tier).
+private struct WarmingUpBanner: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            ProgressView()
+                .controlSize(.small)
+            Text("Warming up engines…")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(.systemGray6))
     }
 }
 

@@ -1,4 +1,7 @@
 import Foundation
+#if SAYAGAINPLUS_TIER
+import Speech
+#endif
 
 /// Composition root for the SessionViewModel. Two variants live behind a compile flag:
 ///
@@ -14,11 +17,19 @@ import Foundation
 @MainActor
 enum SessionEnvironment {
     static func makeViewModel() -> SessionViewModel {
+        // Each SKU loads its own config file so language lists and the presence of the
+        // `engines` block match what the tier can actually deliver.
+        #if SAYAGAINPLUS_TIER
+        let configName = "config-plus"
+        #else
+        let configName = "config"
+        #endif
+
         let config: SayAgainConfiguration
         do {
-            config = try SayAgainConfiguration.loadFromBundle()
+            config = try SayAgainConfiguration.loadFromBundle(name: configName)
         } catch {
-            fatalError("SayAgain: config.json missing or malformed — \(error)")
+            fatalError("SayAgain: \(configName).json missing or malformed — \(error)")
         }
 
         let catalog = AppleLanguageCatalog(
@@ -31,23 +42,31 @@ enum SessionEnvironment {
 
         #if SAYAGAINPLUS_TIER
         let bridgeTranslator = BridgeTranslator(bridge: bridge)
-        let nllb = NLLBTranslator()
-        let nllbTargets: Set<String> = Set(config.engines?.translation.nllb ?? [])
+        let llm = MLXLLMTranslator()
+        let llmLanguages: Set<String> = Set(config.engines?.translation.llm ?? [])
         let translator: any Translating = CompoundTranslator(
             native: bridgeTranslator,
-            nllb: nllb,
-            nllbTargets: nllbTargets
+            llm: llm,
+            llmLanguages: llmLanguages
         )
         let makeTranscriber: @Sendable ([String]) -> any StreamingTranscriber = { requested in
             makeStreamingTranscriberPlus(config: config, requestedLanguages: requested)
         }
+        let downloadManager = ModelDownloadManager()
+        return SessionViewModel(
+            config: config,
+            catalog: catalog,
+            translationBridge: bridge,
+            preferences: preferences,
+            translator: translator,
+            makeTranscriber: makeTranscriber,
+            downloadManager: downloadManager
+        )
         #else
         let translator: any Translating = BridgeTranslator(bridge: bridge)
         let makeTranscriber: @Sendable ([String]) -> any StreamingTranscriber = { _ in
             AppleSpeechTranscriber(clock: SystemClock())
         }
-        #endif
-
         return SessionViewModel(
             config: config,
             catalog: catalog,
@@ -56,6 +75,7 @@ enum SessionEnvironment {
             translator: translator,
             makeTranscriber: makeTranscriber
         )
+        #endif
     }
 
     #if SAYAGAINPLUS_TIER
@@ -70,7 +90,15 @@ enum SessionEnvironment {
             config.engines?.recognition.native ?? config.transcription.spokenLanguages
         )
         let allNative = requestedLanguages.allSatisfy { nativeSet.contains($0) }
-        if allNative {
+        // `SpeechTranscriber.isAvailable` is false on devices without Apple Intelligence
+        // (iPhone 14 and earlier, most iPads without M-series chips) and inside the
+        // Simulator. When that's the case, skip Apple STT and go straight to Whisper —
+        // otherwise the user picks a supported language, the framework has no assets,
+        // and nothing transcribes.
+        let appleAvailable = SpeechTranscriber.isAvailable
+        let useApple = allNative && appleAvailable
+        print("SessionEnvironment[Plus]: requested=\(requestedLanguages) allNative=\(allNative) appleAvailable=\(appleAvailable) → \(useApple ? "AppleSpeechTranscriber" : "WhisperStreamingTranscriber")")
+        if useApple {
             return AppleSpeechTranscriber(clock: SystemClock())
         }
         return WhisperStreamingTranscriber(

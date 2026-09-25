@@ -35,7 +35,7 @@
     "truncateOnSessionStart": true
   },
   "planned": {
-    "recognition": ["ru","pl","ro","hu","th"],
-    "translation": ["ro","hu","th"]
+    "recognition": ["ru","pl","en","de","es"],
+    "translation": ["en", "ro"]
   }
 }

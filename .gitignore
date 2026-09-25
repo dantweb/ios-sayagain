@@ -16,3 +16,6 @@ SayAgain/tools/models/
 
 # macOS
 .DS_Store
+
+# Signing (each developer sets their own DEVELOPMENT_TEAM; template checked in as Signing.xcconfig.template)
+SayAgain/Signing.xcconfig

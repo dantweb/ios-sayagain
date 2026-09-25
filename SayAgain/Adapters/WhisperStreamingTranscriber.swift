@@ -40,12 +40,15 @@ actor WhisperStreamingTranscriber: StreamingTranscriber {
     }
 
     func start(spokenLanguages: [String]) async throws {
+        print("WhisperStreamingTranscriber: start(spokenLanguages: \(spokenLanguages))")
         guard MicrophonePermission.status() == .granted else {
+            print("WhisperStreamingTranscriber: mic permission NOT granted")
             throw TranscriberFailure.assetsUnavailable("Microphone permission not granted")
         }
 
         // Pin the language when the user picked exactly one; nil means whisper auto-detects.
         let pinnedLanguage: String? = spokenLanguages.count == 1 ? spokenLanguages.first : nil
+        print("WhisperStreamingTranscriber: pinned language = \(pinnedLanguage ?? "auto-detect")")
 
         let inner = EndpointedTranscriber(
             engine: engine,
@@ -67,6 +70,14 @@ actor WhisperStreamingTranscriber: StreamingTranscriber {
         }
 
         try startMicrophone(feeding: inner)
+        print("WhisperStreamingTranscriber: mic tap live, waiting for speech-then-silence to trigger transcription")
+    }
+
+    /// Forwards to the underlying `WhisperTranscriptionEngine` so a session-start warm-up
+    /// begins loading the ~244 MB `openai_whisper-small` weights in parallel with the
+    /// user speaking their first sentence.
+    func warmUp() async {
+        await engine.warmUp()
     }
 
     func stop() async {
