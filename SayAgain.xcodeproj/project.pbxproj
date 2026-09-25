@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		979FA090303F6EF400277894 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 979FA08F303F6EF400277894 /* WhisperKit */; };
+		9775B23630417A50009C5EAD /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9775B23530417A50009C5EAD /* WhisperKit */; };
+		97C1D2CF3041EF8400C6A137 /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2CE3041EF8400C6A137 /* MLXEmbedders */; };
+		97C1D2D13041EF8400C6A137 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2D03041EF8400C6A137 /* MLXLLM */; };
+		97C1D2D33041EF8400C6A137 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2D23041EF8400C6A137 /* MLXLMCommon */; };
+		97C1D2D53041EF8400C6A137 /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2D43041EF8400C6A137 /* MLXMNIST */; };
+		97C1D2D73041EF8400C6A137 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2D63041EF8400C6A137 /* MLXVLM */; };
+		97C1D2D93041EF8400C6A137 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 97C1D2D83041EF8400C6A137 /* StableDiffusion */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,9 +31,17 @@
 			remoteGlobalIDString = 97BEAA59303ED93600533F18;
 			remoteInfo = SayAgain;
 		};
+		97C1D2F83051A29100C6A137 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97BEAA52303ED93600533F18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 97A095A2304094B100DDF2B2;
+			remoteInfo = SayAgainPlus;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		97A095AC304094B100DDF2B2 /* SayAgainPlus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SayAgainPlus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BEAA5A303ED93600533F18 /* SayAgain.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SayAgain.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BEAA69303ED93700533F18 /* SayAgainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SayAgainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BEAA73303ED93700533F18 /* SayAgainUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SayAgainUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,11 +66,24 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		97A095A6304094B100DDF2B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97C1D2D13041EF8400C6A137 /* MLXLLM in Frameworks */,
+				97C1D2D93041EF8400C6A137 /* StableDiffusion in Frameworks */,
+				97C1D2D53041EF8400C6A137 /* MLXMNIST in Frameworks */,
+				97C1D2D73041EF8400C6A137 /* MLXVLM in Frameworks */,
+				97C1D2CF3041EF8400C6A137 /* MLXEmbedders in Frameworks */,
+				97C1D2D33041EF8400C6A137 /* MLXLMCommon in Frameworks */,
+				9775B23630417A50009C5EAD /* WhisperKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97BEAA57303ED93600533F18 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				979FA090303F6EF400277894 /* WhisperKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +128,7 @@
 				97BEAA5A303ED93600533F18 /* SayAgain.app */,
 				97BEAA69303ED93700533F18 /* SayAgainTests.xctest */,
 				97BEAA73303ED93700533F18 /* SayAgainUITests.xctest */,
+				97A095AC304094B100DDF2B2 /* SayAgainPlus.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +136,35 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		97A095A2304094B100DDF2B2 /* SayAgainPlus */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97A095A9304094B100DDF2B2 /* Build configuration list for PBXNativeTarget "SayAgainPlus" */;
+			buildPhases = (
+				97A095A5304094B100DDF2B2 /* Sources */,
+				97A095A6304094B100DDF2B2 /* Frameworks */,
+				97A095A8304094B100DDF2B2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				97BEAA5C303ED93600533F18 /* SayAgain */,
+			);
+			name = SayAgainPlus;
+			packageProductDependencies = (
+				9775B23530417A50009C5EAD /* WhisperKit */,
+				97C1D2CE3041EF8400C6A137 /* MLXEmbedders */,
+				97C1D2D03041EF8400C6A137 /* MLXLLM */,
+				97C1D2D23041EF8400C6A137 /* MLXLMCommon */,
+				97C1D2D43041EF8400C6A137 /* MLXMNIST */,
+				97C1D2D63041EF8400C6A137 /* MLXVLM */,
+				97C1D2D83041EF8400C6A137 /* StableDiffusion */,
+			);
+			productName = SayAgain;
+			productReference = 97A095AC304094B100DDF2B2 /* SayAgainPlus.app */;
+			productType = "com.apple.product-type.application";
+		};
 		97BEAA59303ED93600533F18 /* SayAgain */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97BEAA7D303ED93700533F18 /* Build configuration list for PBXNativeTarget "SayAgain" */;
@@ -125,7 +182,6 @@
 			);
 			name = SayAgain;
 			packageProductDependencies = (
-				979FA08F303F6EF400277894 /* WhisperKit */,
 			);
 			productName = SayAgain;
 			productReference = 97BEAA5A303ED93600533F18 /* SayAgain.app */;
@@ -143,8 +199,10 @@
 			);
 			dependencies = (
 				97BEAA6B303ED93700533F18 /* PBXTargetDependency */,
+				97C1D2F93051A29100C6A137 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				97BEAA5C303ED93600533F18 /* SayAgain */,
 				97BEAA6C303ED93700533F18 /* SayAgainTests */,
 			);
 			name = SayAgainTests;
@@ -168,6 +226,7 @@
 				97BEAA75303ED93700533F18 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				97BEAA5C303ED93600533F18 /* SayAgain */,
 				97BEAA76303ED93700533F18 /* SayAgainUITests */,
 			);
 			name = SayAgainUITests;
@@ -192,7 +251,7 @@
 					};
 					97BEAA68303ED93700533F18 = {
 						CreatedOnToolsVersion = 26.5;
-						TestTargetID = 97BEAA59303ED93600533F18;
+						TestTargetID = 97A095A2304094B100DDF2B2;
 					};
 					97BEAA72303ED93700533F18 = {
 						CreatedOnToolsVersion = 26.5;
@@ -211,6 +270,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				979FA086303F6EF400277894 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */,
+				97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 97BEAA5B303ED93600533F18 /* Products */;
@@ -220,11 +280,19 @@
 				97BEAA59303ED93600533F18 /* SayAgain */,
 				97BEAA68303ED93700533F18 /* SayAgainTests */,
 				97BEAA72303ED93700533F18 /* SayAgainUITests */,
+				97A095A2304094B100DDF2B2 /* SayAgainPlus */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		97A095A8304094B100DDF2B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97BEAA58303ED93600533F18 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -249,6 +317,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		97A095A5304094B100DDF2B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97BEAA56303ED93600533F18 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -283,9 +358,88 @@
 			target = 97BEAA59303ED93600533F18 /* SayAgain */;
 			targetProxy = 97BEAA74303ED93700533F18 /* PBXContainerItemProxy */;
 		};
+		97C1D2F93051A29100C6A137 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 97A095A2304094B100DDF2B2 /* SayAgainPlus */;
+			targetProxy = 97C1D2F83051A29100C6A137 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		97A095AA304094B100DDF2B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconPlus;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7GC2E93E3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayAgain transcribes what you say on this device. Audio never leaves your phone.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dantweb.SayAgainPlus;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = "$(inherited) SAYAGAINPLUS_TIER";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		97A095AB304094B100DDF2B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconPlus;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7GC2E93E3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayAgain transcribes what you say on this device. Audio never leaves your phone.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dantweb.SayAgainPlus;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = "$(inherited) SAYAGAINPLUS_TIER";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		97BEAA7B303ED93700533F18 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -414,11 +568,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7GC2E93E3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SayAgain;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayAgain transcribes what you say on this device. Audio never leaves your phone.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayAgain uses on-device speech recognition to transcribe what you say. Audio and transcripts never leave your phone. ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
@@ -449,11 +605,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7GC2E93E3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SayAgain;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SayAgain transcribes what you say on this device. Audio never leaves your phone.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SayAgain uses on-device speech recognition to transcribe what you say. Audio and transcripts never leave your phone. ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
@@ -483,19 +641,20 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7GC2E93E3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dantweb.SayAgainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) SAYAGAINPLUS_TIER";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SayAgain.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SayAgain";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SayAgainPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SayAgainPlus";
 			};
 			name = Debug;
 		};
@@ -505,19 +664,20 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A7GC2E93E3;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dantweb.SayAgainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = "$(inherited) SAYAGAINPLUS_TIER";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SayAgain.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SayAgain";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SayAgainPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SayAgainPlus";
 			};
 			name = Release;
 		};
@@ -564,6 +724,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		97A095A9304094B100DDF2B2 /* Build configuration list for PBXNativeTarget "SayAgainPlus" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97A095AA304094B100DDF2B2 /* Debug */,
+				97A095AB304094B100DDF2B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		97BEAA55303ED93600533F18 /* Build configuration list for PBXProject "SayAgain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -611,13 +780,51 @@
 				kind = branch;
 			};
 		};
+		97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.29.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		979FA08F303F6EF400277894 /* WhisperKit */ = {
+		9775B23530417A50009C5EAD /* WhisperKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 979FA086303F6EF400277894 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */;
 			productName = WhisperKit;
+		};
+		97C1D2CE3041EF8400C6A137 /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXEmbedders;
+		};
+		97C1D2D03041EF8400C6A137 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		97C1D2D23041EF8400C6A137 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		97C1D2D43041EF8400C6A137 /* MLXMNIST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXMNIST;
+		};
+		97C1D2D63041EF8400C6A137 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXVLM;
+		};
+		97C1D2D83041EF8400C6A137 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97C1D2CD3041EF8400C6A137 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = StableDiffusion;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "ECEF30F0-1BBA-4021-B389-4807D11AB94A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:SayAgain.xcodeproj",
+        "identifier" : "97BEAA68303ED93700533F18",
+        "name" : "SayAgainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
